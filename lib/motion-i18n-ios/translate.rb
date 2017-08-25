@@ -8,6 +8,15 @@ def convert(file, namespace, value)
   end
 end
 
+def write_lproj_file(locale, all_translations)
+  FileUtils.mkdir_p("resources/#{locale}.lproj")
+  File.open("resources/#{locale}.lproj/Localizable.strings", 'w') do |file|
+    all_translations.each do |key, value|
+      convert(file, key, value)
+    end
+  end
+end
+
 def ios_translate
   require 'i18n'
 
@@ -18,14 +27,10 @@ def ios_translate
 
   files.each do |locale_file|
     locale = File.basename(locale_file).sub(".yml", "")
-
     all_translations = I18n.backend.send(:lookup, locale.to_sym, "")
-    FileUtils.mkdir_p("resources/#{locale}.lproj")
-    File.open("resources/#{locale}.lproj/Localizable.strings", 'w') do |file|
-      all_translations.each do |key, value|
-        convert(file, key, value)
-      end
-    end
+    write_lproj_file('pt-BR', all_translations) if locale == 'pt'
+    write_lproj_file('pt', all_translations) if locale == 'pt-BR'
+    write_lproj_file(locale, all_translations)
   end
 end
 
