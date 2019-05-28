@@ -40,10 +40,11 @@ module I18n
     end
 
     def defaultLanguage
-      foundLang = NSLocale.preferredLanguages.find do |l|
-        availableLanguages.include?(l)
+      if availableLanguages.include?(NSLocale.currentLocale.objectForKey(NSLocaleLanguageCode))
+        NSLocale.currentLocale.objectForKey(NSLocaleLanguageCode)
+      else
+        "en"
       end
-      foundLang || 'en'
     end
 
     def nsUserDefaultsKey
